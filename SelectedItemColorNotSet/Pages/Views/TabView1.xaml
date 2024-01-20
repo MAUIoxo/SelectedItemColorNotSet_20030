@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:SelectedItemColorNotSet.ViewModels"
+             xmlns:picker="clr-namespace:SelectedItemColorNotSet.Pages.Views.Controls.CustomPicker"
+             x:DataType="viewModels:CustomPopupViewModel"
+             x:Class="SelectedItemColorNotSet.Pages.Views.TabView1">
+
+
+    <Border>
+        <Grid ColumnDefinitions="*, Auto" Margin="15">
+            <picker:CustomPickerControl Grid.Column="0" Text="{Binding SelectedSavedStoreName, Mode=TwoWay}" Placeholder="Saved Store..." BorderColor="{x:StaticResource Gray400}" Padding="0, 0, 25, 0" Margin="5, 0, 0, 0"/>
+        </Grid>
+    </Border>
+
+</ContentView>

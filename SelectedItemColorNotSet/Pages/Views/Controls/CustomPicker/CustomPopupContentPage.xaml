@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:toolkit="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
+           xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+           xmlns:viewModels="clr-namespace:SelectedItemColorNotSet.ViewModels"
+           xmlns:databaseModels="clr-namespace:SelectedItemColorNotSetDatabase;assembly=SelectedItemColorNotSetDatabase"
+           x:DataType="viewModels:CustomPopupViewModel"
+           x:Class="SelectedItemColorNotSet.Pages.Views.Controls.CustomPicker.CustomPopup"
+           CanBeDismissedByTappingOutsideOfPopup="False">
+
+    <toolkit:Popup.Resources>
+        <ResourceDictionary>
+            <Style x:Key="GridButton" TargetType="Button">
+                <Setter Property="FontAutoScalingEnabled" Value="True" />
+                <Setter Property="HeightRequest" Value="35" />
+                <Setter Property="WidthRequest" Value="105" />
+                <Setter Property="Padding" Value="15, 7, 15, 10" />
+            </Style>
+        </ResourceDictionary>
+    </toolkit:Popup.Resources>
+
+    <Grid x:Name="PopupParentGrid" RowDefinitions="Auto, *, Auto" ColumnDefinitions="*" Background="White" SizeChanged="PopupParentGrid_SizeChanged" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+
+        <!-- First row:    SearchBar -->
+        <SearchBar x:Name="SearchBar" Grid.Row="0" ios:SearchBar.SearchBarStyle="Minimal" Text="{Binding SearchText}" Placeholder="Search Saved Store..." Margin="5" HorizontalOptions="FillAndExpand"/>
+
+
+        <!-- Middle row:   CollectionView -->
+        <Grid Grid.Row="1">
+            <CollectionView x:Name="PopupCollectionView" ItemsSource="{Binding GroupedSavedStoreItems, Mode=TwoWay}" IsGrouped="True" SelectionMode="Single" SelectedItem="{Binding SelectedSavedStore, Mode=TwoWay}" Margin="20">
+
+                <CollectionView.Resources>
+                    <ResourceDictionary>
+                        <Style TargetType="Label">
+                            <Setter Property="FontSize" Value="14" />
+                        </Style>
+                    </ResourceDictionary>
+                </CollectionView.Resources>
+
+
+                <!-- Heading:  Group-Name, underlined -->
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate x:DataType="viewModels:GroupedSavedStoreItemList">
+                        <StackLayout HorizontalOptions="StartAndExpand">
+                            <Label FontAttributes="Bold" Text="{Binding GroupName, StringFormat=' {0}'}" TextColor="{StaticResource Tertiary}" Margin="0, 10, 0, 0" />
+                            <BoxView HeightRequest="0.5" Color="{StaticResource Gray200}" HorizontalOptions="FillAndExpand" Margin="0, 5, 0, 5" />
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+
+
+                <!-- Items:   Name, LastSavedDate -->
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="{x:Type databaseModels:SavedStore}">
+
+                        <SwipeView>
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor" Value="Transparent" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor" Value="{StaticResource LightOrange2}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Delete" BackgroundColor="{StaticResource Blue100Accent}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:CustomPopupViewModel}}, Path=DeleteSavedStoreCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+
+
+                            <Grid ColumnDefinitions="*, Auto" Padding="5, 10">
+                                <Label Grid.Column="0" Text="{Binding Name}" />
+                                <Label Grid.Column="1" Text="{Binding LastSavedDate, StringFormat='{0:d}'}" />
+                            </Grid>
+
+                        </SwipeView>
+
+                    </DataTemplate>
+
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+        </Grid>
+        
+         <!-- Last row:     Cancel/OK-Button --> 
+        <Grid x:Name="PopupButtonBar" Grid.Row="2" ColumnDefinitions="Auto, Auto" ColumnSpacing="5" HeightRequest="35" Margin="15" HorizontalOptions="End">
+
+            <Button Grid.Column="0" Text="Cancel" Clicked="CancelButton_Clicked" Style="{StaticResource GridButton}" />
+            <Button Grid.Column="1" Text="OK" Clicked="OkButton_Clicked" Command="{Binding OkButtonCommand}" CommandParameter="{Binding SelectedSavedStore}" Style="{StaticResource GridButton}" />
+
+        </Grid>
+
+    </Grid>
+
+</toolkit:Popup>
